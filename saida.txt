@@ -1,0 +1,45 @@
+Identificadores: 
+0	5	a
+1	4	i
+3	5	a
+7	5	b
+
+Operadores Lógicos e Aritméticos: 
+1	6	==
+
+Palavras Reservadas: 
+0	1	int
+1	0	if
+3	1	int
+5	0	else
+7	1	int
+
+Comandos: 
+
+Comentários: 
+0	9/alskmdalskm
+
+Literais: 
+1	9	0
+3	9	0
+7	9	0
+
+Separadores: 
+0	6	;
+1	2	(
+1	11	)
+2	0	{
+3	-1	
+
+4	0	}
+6	0	{
+7	-1	
+
+7	11	;
+8	0	}
+
+Atribuição: 
+3	7	=
+7	7	=
+
+Caracteres errados: 
