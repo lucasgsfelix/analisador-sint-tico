@@ -35,7 +35,7 @@ while(1):
 	k=k+1 # faz andar a linha
 
 
-print 'oi saiu'
+print 'Não há erros sintáticos no seu código !'
 
 
 

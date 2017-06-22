@@ -10,7 +10,7 @@ def A(tokens, i):
 		i=Alinha(tokens,i)
 		return i 
 	else:
-	 	i=erro(tokens, i, '||')
+	 	i=erro(tokens, i, aux[2])
 def Alinha(tokens, i):
 	aux = tokens[i].split('\t')
 	if(aux[2]=='||'):
@@ -27,7 +27,7 @@ def B(tokens, i):
 		i=Blinha(tokens, i)
 		return i
 	else:
-		i=erro(tokens, i, '&&')
+		i=erro(tokens, i, aux[2])
 def Blinha(tokens, i):
 	aux = tokens[i].split('\t')
 	if(aux[2]=='&&'):
@@ -61,7 +61,7 @@ def D(tokens, i):
 		i=Dlinha(tokens, i)
 		return i
 	else:
-		i=erro(tokens, i, '</>')
+		i=erro(tokens, i, aux[2])
 def Dlinha(tokens, i):
 	aux = tokens[i].split('\t')
 	if((aux[2]=='>')or(aux[2]=='<')):
@@ -86,7 +86,7 @@ def E(tokens, i):
 		i=Elinha(tokens, i)
 		return i
 	else:
-		i=erro(tokens, i, '==/!=')
+		i=erro(tokens, i, aux[2])
 def Elinha(tokens, i):
 	aux = tokens[i].split('\t')
 	if((aux[2]=='==')or(aux[2]=='!=')):
@@ -103,7 +103,7 @@ def F(tokens, i):
 		i=Flinha(tokens, i)
 		return i
 	else:
-		i=erro(tokens, i, '+/-')
+		i=erro(tokens, i, aux[2])
 def Flinha(tokens, i):
 	aux = tokens[i].split('\t')
 	if((aux[2]=='+')or(aux[2]=='-')):
@@ -120,7 +120,7 @@ def G(tokens, i):
 		i=Glinha(tokens, i)
 		return i
 	else:
-		i=erro(tokens, i, '* /')
+		i=erro(tokens, i, aux[2])
 def Glinha(tokens, i):
 	aux = tokens[i].split('\t')
 	if((aux[2]=='*')or(aux[2]=='/')):
@@ -146,8 +146,10 @@ def H(tokens, i):
 		i=erro(tokens, i, aux[2])
 def erro(tokens, i, caractere):
 	aux = tokens[i].split('\t')
-	if(caractere!=''):
+	if((caractere!=';')or(caractere!='{')or(caractere!='}')or(caractere!=')')or(caractere!='(')):
 		print "Existe um erro na linha ", aux[0], "coluna ", aux[1], "!!! Parece que você esqueceu o caractere", caractere
+	else:
+		print "Existe um erro na linha ", aux[0], "coluna ", aux[1], "! Dê uma olhada no token", caractere
 	exit()
 	i = linha_nova(tokens, i)
 	i = recuperacao_erro(tokens, i)
@@ -188,7 +190,7 @@ def identificadores(tokens, i):
 	aux = tokens[i].split('\t')
 	if(int(aux[3])!=1): #o caracetere que vem depois dos identificadores de identificação não é um identificador
 		print 'O token que deveria vir na linha', aux[0] ,'coluna', aux[1], 'deve ser um identificador ! '
-		i = erro(tokens, i, '')
+		i = erro(tokens, i, aux[2])
 	else: 
 		return i
 
@@ -208,7 +210,7 @@ def declaracao_linha(tokens, i): #essa função vai ser responsável por verific
 		return i
 	else:
 		print 'Há um erro na linha ', aux[0], 'coluna ', aux[1], 'você pode ter esquecido um token ou colocado colocado o token errado !'
-		i = erro(tokens, i, '')
+		i = erro(tokens, i, aux[2])
 		return i
 def declaracao_atribuicao(tokens, i):
 	aux = tokens[i].split('\t')
@@ -246,7 +248,7 @@ def declaracao_atribuicao(tokens, i):
 			else:erro(tokens, i, "\'")
 	else:
 		print 'Há um erro na linha ', aux[0], 'coluna ', aux[1], 'você pode ter esquecido um token ou colocado colocado o token errado !'
-		i = erro(tokens, i, '')
+		i = erro(tokens, i, aux[2])
 def condicao(tokens, i):
 	aux = tokens[i].split('\t')
 	if(aux[2]=='if'):
@@ -312,6 +314,62 @@ def bloco(tokens, i):
 		i = bloco(tokens, i)
 	else:
 		return i
+def bloco(tokens, i):
+	aux = tokens[i].split('\t')
+	if(aux[3]=='1'):
+		i = atribuicao(tokens, i)
+		i = bloco(tokens, i)
+		return i
+	elif((aux[2]=='int')or(aux[2]=='float')or(aux[2]=='char')):
+		i = declaracao(tokens, i)
+		i = bloco(tokens, i)
+		return i
+	elif((aux[2]=='for')or(aux[2]=='while')):
+		i = repeticao(tokens, i)
+		i = bloco(tokens, i)
+		return i
+	elif(aux[2]=='if'):
+		i = condicao(tokens, i)
+		i = bloco(tokens, i)
+		return i
+	elif((aux[2]=='scanf')or(aux[2]=='printf')):
+		i = comandos(tokens, i)
+		i = bloco(tokens, i)
+	else:
+		return i
+def bloco_repeticao(tokens, i):
+	aux = tokens[i].split('\t')
+	if(aux[3]=='1'):
+		i = atribuicao(tokens, i)
+		i = bloco_repeticao(tokens, i)
+		return i
+	elif((aux[2]=='int')or(aux[2]=='float')or(aux[2]=='char')):
+		i = declaracao(tokens, i)
+		i = bloco_repeticao(tokens, i)
+		return i
+	elif((aux[2]=='for')or(aux[2]=='while')):
+		i = repeticao(tokens, i)
+		i = bloco_repeticao(tokens, i)
+		return i
+	elif(aux[2]=='if'):
+		i = condicao(tokens, i)
+		i = bloco_repeticao(tokens, i)
+		return i
+	elif((aux[2]=='scanf')or(aux[2]=='printf')):
+		i = comandos(tokens, i)
+		i = bloco_repeticao(tokens, i)
+	elif((aux[2]=='break')or(aux[2]=='continue')):
+		i=i+1
+		aux = tokens[i].split('\t')
+		if(aux[2]==';'):
+			return i
+		else:
+			i=erro(tokens, i, ";")
+
+
+
+	else:
+		return i
 def comandos(tokens, i):
 	aux = tokens[i].split('\t')
 	if(aux[2]=='printf'):
@@ -367,7 +425,7 @@ def atribuicao(tokens, i):
 					else:i=erro(tokens, i, "\'")
 			else:
 				print "Você está tentando fazer uma atribuição de um token não válido, na linha", aux[0], "coluna", aux[1]
-				i = erro(tokens, i, '')
+				i = erro(tokens, i, aux[2])
 		else:i=erro(tokens, i, "=")
 
 
@@ -379,7 +437,7 @@ def andamento(tokens, i):
 		return i
 	else:
 		print "O token na linha", aux[0], "coluna", aux[1], " deveria ser um identificador !"
-		i = erro(tokens, i, '')
+		i = erro(tokens, i, aux[2])
 		return i
 
 def andamento_linha(tokens, i): #tenho que fazer diminuir tbm 
@@ -397,10 +455,10 @@ def andamento_linha(tokens, i): #tenho que fazer diminuir tbm
 				if((aux[3]=='1')or(aux[3]=='4')):
 					return i 
 				else:print "O token na linha", aux[0], "coluna", aux[1], " deveria ser um identificador !"
-				i = erro(tokens, i, '')
+				i = erro(tokens, i, aux[2])
 			else:i=erro(tokens, i, "+/-")
 		else:print "O token na linha", aux[0], "coluna", aux[1], " deveria ser um identificador !"
-		i = erro(tokens, i, '')
+		i = erro(tokens, i, aux[2])
 	elif((aux[2]=='++')or(aux[2]=='--')): #i++
 		return i
 	elif(aux[2]=='-'): #i--
@@ -414,7 +472,7 @@ def andamento_linha(tokens, i): #tenho que fazer diminuir tbm
 		if(aux[2]=='+'):
 			return i
 	else:print "O token da linha ", aux[0], "coluna", aux[1], "está incorreto!"
-	i = erro(tokens, i, '')
+	i = erro(tokens, i, aux[2])
 
 def repeticao(tokens, i):
 	#faço aqui um split
@@ -431,7 +489,7 @@ def repeticao(tokens, i):
 				aux = tokens[i].split('\t')
 				if(aux[2]=='{'):
 					i=i+1
-					i=bloco(tokens, i)
+					i=bloco_repeticao(tokens, i)
 					i=i+1
 					aux = tokens[i].split('\t') 
 					if(aux[2]=='}'):
@@ -463,7 +521,7 @@ def repeticao(tokens, i):
 						aux = tokens[i].split('\t') 
 						if(aux[2]=='{'):
 							i=i+1
-							i=bloco(tokens, i)
+							i=bloco_repeticao(tokens, i)
 							i=i+1
 							aux = tokens[i].split('\t') 
 							if(aux[2]=='}'):
